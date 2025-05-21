@@ -21,8 +21,8 @@ COPY . .
 # Build the backend
 WORKDIR /app/apps/backend
 RUN npm install --legacy-peer-deps && \
-    npm install --save-dev @nx/webpack webpack webpack-cli --legacy-peer-deps && \
-    npx webpack --config webpack.config.js
+    npm install --save-dev webpack webpack-cli --legacy-peer-deps && \
+    npm run build
 
 # Production stage
 FROM node:20-alpine
@@ -34,7 +34,7 @@ COPY --from=builder /app/apps/backend/dist ./dist
 COPY --from=builder /app/apps/backend/package*.json ./
 
 # Install production dependencies only
-RUN npm install --only=production --legacy-peer-deps
+RUN npm install --omit=dev --legacy-peer-deps
 
 # Expose the port your app runs on
 EXPOSE 3000
