@@ -9,7 +9,15 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              configFile: 'tsconfig.json',
+              transpileOnly: true
+            }
+          }
+        ],
         exclude: /node_modules/,
       },
     ],
@@ -24,4 +32,5 @@ module.exports = {
   optimization: {
     minimize: false,
   },
+  mode: 'production'
 };
