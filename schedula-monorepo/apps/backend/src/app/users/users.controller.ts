@@ -1,10 +1,5 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+// import { Logger } from '@nestjs/common';
 
 @Controller('users')
-export class UsersController {
-  private readonly logger = new Logger(UsersController.name);
-
-  constructor() {
-    this.logger.log('UsersController initialized');
-  }
-} 
+export class UsersController {} 
