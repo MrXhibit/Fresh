@@ -1,20 +1,27 @@
-const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
-const { join } = require('path');
+const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  output: {
-    path: join(__dirname, 'dist'),
+  entry: './src/main.ts',
+  target: 'node',
+  externals: [nodeExternals()],
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
   },
-  plugins: [
-    new NxAppWebpackPlugin({
-      target: 'node',
-      compiler: 'tsc',
-      main: './src/main.ts',
-      tsConfig: './tsconfig.app.json',
-      assets: ['./src/assets'],
-      optimization: false,
-      outputHashing: 'none',
-      generatePackageJson: true,
-    }),
-  ],
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  optimization: {
+    minimize: false,
+  },
 };

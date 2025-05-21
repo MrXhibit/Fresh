@@ -17,7 +17,8 @@ COPY nx.json ./
 COPY tsconfig*.json ./
 
 # Install dependencies with legacy peer deps to handle peer dependency conflicts
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps && \
+    npm install --save-dev @nx/webpack webpack webpack-cli --legacy-peer-deps
 
 # Copy the rest of the application
 COPY . .
@@ -25,6 +26,7 @@ COPY . .
 # Build the backend
 RUN cd apps/backend && \
     npm install --legacy-peer-deps && \
+    npm install --save-dev @nx/webpack webpack webpack-cli --legacy-peer-deps && \
     npm run build && \
     ls -la dist/
 
