@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "next": "14.1.0",
+    "@nx/next": "21.1.0",
     "react": "^18",
     "react-dom": "^18",
     "jsonwebtoken": "^9.0.2",
@@ -25,6 +26,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@nx/next": "21.1.0",
     "typescript": "^5",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
