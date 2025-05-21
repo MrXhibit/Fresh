@@ -14,7 +14,10 @@ module.exports = {
             loader: 'ts-loader',
             options: {
               configFile: 'tsconfig.json',
-              transpileOnly: true
+              transpileOnly: true,
+              compilerOptions: {
+                module: 'es2022'
+              }
             }
           }
         ],
@@ -24,6 +27,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
   output: {
     filename: 'main.js',
