@@ -8,6 +8,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NX_VERBOSE_LOGGING=true
 
+# Install NestJS CLI globally
+RUN npm install -g @nestjs/cli
+
 # Copy package files
 COPY package*.json ./
 COPY nx.json ./
@@ -20,7 +23,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Build the backend
-RUN cd apps/backend && npm run build
+RUN cd apps/backend && npm install && npm run build
 
 # Production stage
 FROM node:20-alpine
