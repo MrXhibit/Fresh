@@ -23,7 +23,10 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Build the backend
-RUN cd apps/backend && npm install && npm run build
+RUN cd apps/backend && \
+    npm install --legacy-peer-deps && \
+    npm run build && \
+    ls -la dist/
 
 # Production stage
 FROM node:20-alpine
