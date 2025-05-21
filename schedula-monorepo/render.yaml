@@ -3,8 +3,8 @@ services:
   - type: web
     name: schedula-backend
     env: node
-    buildCommand: cd schedula-monorepo && npm install && npx nx build backend
-    startCommand: cd schedula-monorepo && npx nx serve backend
+    buildCommand: npm install && npx nx build backend
+    startCommand: npx nx serve backend
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,8 +14,8 @@ services:
   - type: web
     name: schedula-frontend
     env: node
-    buildCommand: cd schedula-monorepo && npm install && npx nx build frontend
-    startCommand: cd schedula-monorepo && npx nx serve frontend --prod
+    buildCommand: npm install && npx nx build frontend
+    startCommand: npx nx serve frontend --prod
     envVars:
       - key: NODE_ENV
         value: production
