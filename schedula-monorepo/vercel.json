@@ -1,0 +1,12 @@
+{
+  "buildCommand": "npm install && npx nx build frontend",
+  "outputDirectory": "dist/apps/frontend",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "builds": [
+    {
+      "src": "apps/frontend/package.json",
+      "use": "@vercel/next"
+    }
+  ]
+} 

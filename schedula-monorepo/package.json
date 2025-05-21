@@ -2,7 +2,9 @@
   "name": "@schedula-monorepo/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "vercel-build": "npm install && npx nx build frontend"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",
