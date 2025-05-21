@@ -19,8 +19,8 @@ RUN npm install --legacy-peer-deps
 # Copy the rest of the application
 COPY . .
 
-# Build the backend with verbose logging
-RUN npx nx build backend --configuration=production --verbose
+# Build the backend
+RUN cd apps/backend && npm run build
 
 # Production stage
 FROM node:20-alpine
@@ -31,9 +31,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copy built assets from builder
-COPY --from=builder /app/dist/apps/backend ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/apps/backend/dist ./dist
+COPY --from=builder /app/apps/backend/node_modules ./node_modules
+COPY --from=builder /app/apps/backend/package*.json ./
 
 # Expose the port your app runs on
 EXPOSE 3000
