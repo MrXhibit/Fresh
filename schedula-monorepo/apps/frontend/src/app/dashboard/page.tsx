@@ -1,155 +1,183 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Appointment {
-  id: number;
-  patientName: string;
+  id: string;
   date: string;
   time: string;
-  type: string;
-  status: string;
+  patientName?: string;
+  doctorName?: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
+}
+
+interface DashboardStats {
+  totalAppointments: number;
+  upcomingAppointments: number;
+  completedAppointments: number;
+  cancelledAppointments: number;
 }
 
 export default function Dashboard() {
-  const router = useRouter();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [userType, setUserType] = useState<'doctor' | 'patient' | null>(null);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalAppointments: 0,
+    upcomingAppointments: 0,
+    completedAppointments: 0,
+    cancelledAppointments: 0,
+  });
+  const [recentAppointments, setRecentAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
+    const storedUserType = localStorage.getItem('userType');
+    if (storedUserType) {
+      setUserType(storedUserType as 'doctor' | 'patient');
+      fetchDashboardData();
     }
+  }, []);
 
-    // Fetch appointments
-    fetchAppointments();
-  }, [router]);
-
-  const fetchAppointments = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await fetch('/api/appointments', {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/dashboard', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
-        setAppointments(data);
-      } else {
-        console.error('Failed to fetch appointments');
+        setStats(data.stats);
+        setRecentAppointments(data.recentAppointments);
       }
     } catch (error) {
-      console.error('Error fetching appointments:', error);
+      console.error('Error fetching dashboard data:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">Schedula</h1>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <button
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  router.push('/login');
-                }}
-                className="ml-4 px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
-              >
-                Sign out
-              </button>
-            </div>
+    <div className="space-y-6">
+      <div className="bg-white shadow rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          Welcome back, {userType === 'doctor' ? 'Doctor' : 'Patient'}!
+        </h2>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h3 className="text-lg font-medium text-blue-900">Total Appointments</h3>
+            <p className="text-3xl font-bold text-blue-600">{stats.totalAppointments}</p>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg">
+            <h3 className="text-lg font-medium text-green-900">Upcoming</h3>
+            <p className="text-3xl font-bold text-green-600">{stats.upcomingAppointments}</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-lg font-medium text-gray-900">Completed</h3>
+            <p className="text-3xl font-bold text-gray-600">{stats.completedAppointments}</p>
+          </div>
+          <div className="bg-red-50 p-4 rounded-lg">
+            <h3 className="text-lg font-medium text-red-900">Cancelled</h3>
+            <p className="text-3xl font-bold text-red-600">{stats.cancelledAppointments}</p>
           </div>
         </div>
-      </nav>
+      </div>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Quick Stats */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Today's Appointments</dt>
-                      <dd className="text-lg font-medium text-gray-900">{appointments.length}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div className="bg-white shadow rounded-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-900">Recent Appointments</h2>
+          <Link
+            href={userType === 'doctor' ? '/dashboard/appointments' : '/dashboard/book'}
+            className="text-blue-600 hover:text-blue-800"
+          >
+            {userType === 'doctor' ? 'View All' : 'Book New'}
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Time
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {userType === 'doctor' ? 'Patient' : 'Doctor'}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {recentAppointments.map((appointment) => (
+                <tr key={appointment.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {new Date(appointment.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {appointment.time}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {userType === 'doctor' ? appointment.patientName : appointment.doctorName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        appointment.status === 'scheduled'
+                          ? 'bg-green-100 text-green-800'
+                          : appointment.status === 'completed'
+                          ? 'bg-gray-100 text-gray-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-            {/* Upcoming Appointments */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">Upcoming Appointments</h3>
-                <div className="mt-4 space-y-4">
-                  {appointments.map((appointment) => (
-                    <div key={appointment.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{appointment.patientName}</p>
-                        <p className="text-sm text-gray-500">{appointment.date} at {appointment.time}</p>
-                      </div>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {appointment.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">Quick Actions</h3>
-                <div className="mt-4 space-y-4">
-                  <button
-                    onClick={() => router.push('/dashboard/availability')}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    Manage Availability
-                  </button>
-                  <button
-                    onClick={() => router.push('/dashboard/profile')}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Update Profile
-                  </button>
-                </div>
-              </div>
-            </div>
+      {userType === 'doctor' && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="bg-white shadow rounded-lg p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Today's Schedule</h3>
+            {/* Add today's schedule component here */}
+          </div>
+          <div className="bg-white shadow rounded-lg p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Patient Statistics</h3>
+            {/* Add patient statistics component here */}
           </div>
         </div>
-      </main>
+      )}
+
+      {userType === 'patient' && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="bg-white shadow rounded-lg p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Upcoming Medications</h3>
+            {/* Add medications component here */}
+          </div>
+          <div className="bg-white shadow rounded-lg p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Test Results</h3>
+            {/* Add test results component here */}
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
