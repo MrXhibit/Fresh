@@ -1,0 +1,10 @@
+{
+  "name": "@schedula-monorepo/frontend-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@schedula-monorepo/frontend"
+    ]
+  }
+}
