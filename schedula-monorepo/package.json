@@ -2,8 +2,6 @@
   "name": "schedula-monorepo",
   "version": "0.0.1",
   "private": true,
-<<<<<<< HEAD
-=======
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
@@ -72,7 +70,6 @@
     "typescript-eslint": "^8.19.0",
     "webpack-cli": "^5.1.4"
   },
->>>>>>> b41d22488a38595fbf9a8d1f529b861ab54bcb16
   "workspaces": [
     "apps/*",
     "packages/*"
