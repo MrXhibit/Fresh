@@ -1,6 +1,6 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "@schedula-monorepo/frontend",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,22 +13,23 @@
   },
   "dependencies": {
     "next": "14.1.0",
-    "@nx/next": "21.1.0",
+    "@nx/next": "17.2.8",
     "react": "^18",
     "react-dom": "^18",
     "jsonwebtoken": "^9.0.2",
     "@types/jsonwebtoken": "^9.0.5",
     "tailwindcss": "^3.3.0",
     "autoprefixer": "^10.0.1",
-    "postcss": "^8"
+    "postcss": "^8",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@nx/next": "21.1.0",
+    "@nx/next": "17.2.8",
     "typescript": "^5",
-    "eslint": "^8",
+    "eslint": "~8.56.0",
     "eslint-config-next": "14.1.0",
     "@testing-library/react": "^14.2.1",
     "@testing-library/jest-dom": "^6.4.2",
