@@ -1,13 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 import { Doctor } from './doctor.entity';
 import { Patient } from './patient.entity';
 
-export enum UserType {
-  DOCTOR = 'doctor',
+export enum UserRole {
   PATIENT = 'patient',
+  DOCTOR = 'doctor',
+  ADMIN = 'admin',
 }
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,15 +27,19 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UserType,
+    enum: UserRole,
+    default: UserRole.PATIENT,
   })
-  userType: UserType;
+  role: UserRole;
 
   @Column({ nullable: true })
-  resetToken: string;
+  phoneNumber: string;
 
   @Column({ nullable: true })
-  resetTokenExpires: Date;
+  specialization?: string;
+
+  @Column({ nullable: true })
+  licenseNumber?: string;
 
   @OneToOne(() => Doctor, doctor => doctor.user, { nullable: true })
   doctor: Doctor;

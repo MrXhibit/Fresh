@@ -1,34 +1,67 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { MedicalRecordsService } from './medical-records.service';
 import { CreateMedicalRecordDto } from './dto/create-medical-record.dto';
+import { UpdateMedicalRecordDto } from './dto/update-medical-record.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { MedicalRecord } from './entities/medical-record.entity';
 
-@Controller('medical-records')
+@ApiTags('medical-records')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
+@Controller('medical-records')
 export class MedicalRecordsController {
   constructor(private readonly medicalRecordsService: MedicalRecordsService) {}
 
   @Post()
-  async create(@Body() createMedicalRecordDto: CreateMedicalRecordDto, @Request() req) {
-    return this.medicalRecordsService.create(createMedicalRecordDto, req.user.doctorId);
+  @ApiOperation({ summary: 'Create a new medical record' })
+  @ApiResponse({ status: 201, description: 'Medical record created successfully', type: MedicalRecord })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  create(@Body() createMedicalRecordDto: CreateMedicalRecordDto) {
+    return this.medicalRecordsService.create(createMedicalRecordDto);
   }
 
   @Get()
-  async findAll(@Request() req) {
-    return this.medicalRecordsService.findAll(req.user.id, req.user.userType);
+  @ApiOperation({ summary: 'Get all medical records' })
+  @ApiResponse({ status: 200, description: 'Return all medical records', type: [MedicalRecord] })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  findAll() {
+    return this.medicalRecordsService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Request() req) {
-    return this.medicalRecordsService.findOne(id, req.user.id, req.user.userType);
+  @ApiOperation({ summary: 'Get a medical record by id' })
+  @ApiResponse({ status: 200, description: 'Return the medical record', type: MedicalRecord })
+  @ApiResponse({ status: 404, description: 'Medical record not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  findOne(@Param('id') id: string) {
+    return this.medicalRecordsService.findOne(id);
+  }
+
+  @Get('patient/:patientId')
+  @ApiOperation({ summary: 'Get all medical records for a patient' })
+  @ApiResponse({ status: 200, description: 'Return all medical records for the patient', type: [MedicalRecord] })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  findByPatient(@Param('patientId') patientId: string) {
+    return this.medicalRecordsService.findByPatient(patientId);
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateMedicalRecordDto: Partial<CreateMedicalRecordDto>,
-    @Request() req,
-  ) {
-    return this.medicalRecordsService.update(id, updateMedicalRecordDto, req.user.id, req.user.userType);
+  @ApiOperation({ summary: 'Update a medical record' })
+  @ApiResponse({ status: 200, description: 'Medical record updated successfully', type: MedicalRecord })
+  @ApiResponse({ status: 404, description: 'Medical record not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  update(@Param('id') id: string, @Body() updateMedicalRecordDto: UpdateMedicalRecordDto) {
+    return this.medicalRecordsService.update(id, updateMedicalRecordDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a medical record' })
+  @ApiResponse({ status: 200, description: 'Medical record deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Medical record not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  remove(@Param('id') id: string) {
+    return this.medicalRecordsService.remove(id);
   }
 } 

@@ -8,7 +8,7 @@ export class Patient {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ nullable: true })
   dateOfBirth: Date;
 
   @Column({ nullable: true })
@@ -19,9 +19,6 @@ export class Patient {
 
   @Column({ nullable: true })
   emergencyContact: string;
-
-  @Column({ nullable: true })
-  insuranceInfo: string;
 
   @OneToOne(() => User, user => user.patient)
   @JoinColumn()

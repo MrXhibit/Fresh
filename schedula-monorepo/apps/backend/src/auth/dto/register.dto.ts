@@ -1,5 +1,5 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { UserType } from '../../users/entities/user.entity';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength, IsOptional } from 'class-validator';
+import { UserRole } from '../../users/entities/user.entity';
 
 export class RegisterDto {
   @IsString()
@@ -18,16 +18,32 @@ export class RegisterDto {
   @MinLength(6)
   password: string;
 
-  @IsEnum(UserType)
+  @IsEnum(UserRole)
   @IsNotEmpty()
-  userType: UserType;
+  role: UserRole;
+
+  @IsString()
+  @IsNotEmpty()
+  phoneNumber: string;
 
   // Optional fields for doctor
+  @IsString()
+  @IsOptional()
   specialization?: string;
+
+  @IsString()
+  @IsOptional()
   licenseNumber?: string;
 
   // Optional fields for patient
+  @IsOptional()
   dateOfBirth?: Date;
+
+  @IsString()
+  @IsOptional()
   gender?: string;
+
+  @IsString()
+  @IsOptional()
   address?: string;
 } 

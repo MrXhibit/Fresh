@@ -1,20 +1,30 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Request, Patch, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SchedulesService } from './schedules.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TimeSlotStatus } from './entities/schedule.entity';
 
-@Controller('schedules')
+@ApiTags('schedules')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
+@Controller('schedules')
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new schedule' })
+  @ApiResponse({ status: 201, description: 'Schedule created successfully', type: Schedule })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async create(@Body() createScheduleDto: CreateScheduleDto, @Request() req) {
     return this.schedulesService.create(createScheduleDto, req.user.doctorId);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all schedules' })
+  @ApiResponse({ status: 200, description: 'Return all schedules', type: [Schedule] })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(@Request() req) {
     return this.schedulesService.findAll(req.user.doctorId);
   }

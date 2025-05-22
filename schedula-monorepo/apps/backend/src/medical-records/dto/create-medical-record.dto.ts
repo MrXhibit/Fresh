@@ -1,31 +1,61 @@
-import { IsDate, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional, IsDateString } from 'class-validator';
 
 export class CreateMedicalRecordDto {
-  @IsUUID()
-  @IsNotEmpty()
+  @ApiProperty({
+    description: 'ID of the patient',
+    example: '123e4567-e89b-12d3-a456-426614174000'
+  })
+  @IsString()
   patientId: string;
 
-  @IsDate()
-  @IsNotEmpty()
-  date: Date;
+  @ApiProperty({
+    description: 'Date of the medical record',
+    example: '2024-03-20'
+  })
+  @IsDateString()
+  date: string;
 
+  @ApiProperty({
+    description: 'Diagnosis of the patient',
+    example: 'Common cold with fever'
+  })
   @IsString()
-  @IsNotEmpty()
   diagnosis: string;
 
-  @IsString()
+  @ApiProperty({
+    description: 'Prescription given to the patient',
+    example: 'Paracetamol 500mg, 3 times daily',
+    required: false
+  })
   @IsOptional()
+  @IsString()
   prescription?: string;
 
-  @IsString()
+  @ApiProperty({
+    description: 'Additional notes about the patient',
+    example: 'Patient should rest and drink plenty of fluids',
+    required: false
+  })
   @IsOptional()
+  @IsString()
   notes?: string;
 
-  @IsDate()
+  @ApiProperty({
+    description: 'Follow-up appointment date',
+    example: '2024-03-27',
+    required: false
+  })
   @IsOptional()
-  followUpDate?: Date;
+  @IsDateString()
+  followUpDate?: string;
 
-  @IsString()
+  @ApiProperty({
+    description: 'Notes for the follow-up appointment',
+    example: 'Check if symptoms have improved',
+    required: false
+  })
   @IsOptional()
+  @IsString()
   followUpNotes?: string;
 } 

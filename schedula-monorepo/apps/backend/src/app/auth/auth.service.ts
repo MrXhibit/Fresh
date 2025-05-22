@@ -4,6 +4,7 @@ import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from '../users/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,7 @@ export class AuthService {
       ...userData,
       email,
       password: hashedPassword,
+      role: UserRole.DOCTOR, // Default to DOCTOR role for registration
     });
 
     return user;

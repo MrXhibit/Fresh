@@ -3,6 +3,7 @@ import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AppointmentStatus } from './entities/appointment.entity';
+import { UserRole } from '../users/entities/user.entity';
 
 @Controller('appointments')
 @UseGuards(JwtAuthGuard)
@@ -11,17 +12,17 @@ export class AppointmentsController {
 
   @Post()
   async create(@Body() createAppointmentDto: CreateAppointmentDto, @Request() req) {
-    return this.appointmentsService.create(createAppointmentDto, req.user.patientId);
+    return this.appointmentsService.create(createAppointmentDto, req.user.patient.id);
   }
 
   @Get()
   async findAll(@Request() req) {
-    return this.appointmentsService.findAll(req.user.id, req.user.userType);
+    return this.appointmentsService.findAll(req.user.id, req.user.role);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Request() req) {
-    return this.appointmentsService.findOne(id, req.user.id, req.user.userType);
+    return this.appointmentsService.findOne(id, req.user.id, req.user.role);
   }
 
   @Patch(':id/status')
@@ -30,16 +31,16 @@ export class AppointmentsController {
     @Body('status') status: AppointmentStatus,
     @Request() req,
   ) {
-    return this.appointmentsService.updateStatus(id, status, req.user.id, req.user.userType);
+    return this.appointmentsService.updateStatus(id, status, req.user.id, req.user.role);
   }
 
   @Patch(':id/cancel')
   async cancel(@Param('id') id: string, @Request() req) {
-    return this.appointmentsService.cancel(id, req.user.id, req.user.userType);
+    return this.appointmentsService.cancel(id, req.user.id, req.user.role);
   }
 
   @Patch(':id/complete')
   async complete(@Param('id') id: string, @Request() req) {
-    return this.appointmentsService.complete(id, req.user.id, req.user.userType);
+    return this.appointmentsService.complete(id, req.user.id, req.user.role);
   }
 } 

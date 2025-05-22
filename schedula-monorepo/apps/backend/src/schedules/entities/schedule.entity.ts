@@ -1,10 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Doctor } from '../../users/entities/doctor.entity';
 
-export enum TimeSlotStatus {
-  AVAILABLE = 'available',
-  BOOKED = 'booked',
-  UNAVAILABLE = 'unavailable',
+export enum DayOfWeek {
+  MONDAY = 'monday',
+  TUESDAY = 'tuesday',
+  WEDNESDAY = 'wednesday',
+  THURSDAY = 'thursday',
+  FRIDAY = 'friday',
+  SATURDAY = 'saturday',
+  SUNDAY = 'sunday',
 }
 
 @Entity()
@@ -12,18 +16,26 @@ export class Schedule {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'date' })
-  date: Date;
-
-  @Column()
-  time: string;
-
   @Column({
     type: 'enum',
-    enum: TimeSlotStatus,
-    default: TimeSlotStatus.AVAILABLE,
+    enum: DayOfWeek,
   })
-  status: TimeSlotStatus;
+  dayOfWeek: DayOfWeek;
+
+  @Column()
+  startTime: string;
+
+  @Column()
+  endTime: string;
+
+  @Column({ default: true })
+  isAvailable: boolean;
+
+  @Column({ nullable: true })
+  breakStartTime: string;
+
+  @Column({ nullable: true })
+  breakEndTime: string;
 
   @ManyToOne(() => Doctor, doctor => doctor.schedules)
   @JoinColumn()
