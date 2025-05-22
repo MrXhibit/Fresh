@@ -40,6 +40,7 @@ export class AuthService {
       email,
       password: hashedPassword,
       userType,
+      role: userType,
       ...userData,
     });
 
